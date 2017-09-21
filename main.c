@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "hsvrgb.h"
+#include "battery.h"
 
 #define byte unsigned char
 
@@ -92,9 +93,10 @@ void hsvGradient(
 	pixel [R] = rgb->r;
 	pixel [G] = rgb->g;
 	pixel [B] = rgb->b;
+	free(rgb);
 }
 
-int batteryPercentage; // 0 - 100
+double batteryRate; // 0 - 1
 
 void hsvGradientPartial(
 		byte* pixel,
@@ -103,7 +105,7 @@ void hsvGradientPartial(
 		unsigned long loop)
 {
 	hsvGradient(pixel, x, y, loop);
-	if (x > batteryPercentage * (WIDTH / 100.0)) {
+	if (x > batteryRate * WIDTH) {
 		pixel [R] = 0;
 		pixel [G] = 0;
 		pixel [B] = 0;
@@ -132,7 +134,7 @@ int main() {
 		if (loop % 100 == 0)
 			printf("%li\n", loop);
 
-		batteryPercentage = (loop / 10) % 100;
+		batteryRate = get_battery();
 
 		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {
@@ -149,7 +151,8 @@ int main() {
 		//printf("%i, %i\n", DATA_SIZE, read);
 
 		// sleep
-		usleep (0.004 seconds);
+		//usleep (0.004 seconds);
+		usleep (1 seconds);
 	}
 	fclose(fb);
 }

@@ -4,7 +4,7 @@ CC=gcc
 CFLAGS=-Wall -fPIC -I.
 LIBS=-lm
 DEPS = hsvrgb.h
-OBJ = hsvrgb.o main.o
+OBJ = hsvrgb.o main.o battery.o
 
 %.o: %.c ${DEPS}
 	${CC} ${CFLAGS} -c -o $@ $<
