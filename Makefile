@@ -1,17 +1,20 @@
 .PHONY: all clean
 
-# `make CC=winegcc` to build for windows on linux
 CC=gcc
-CFLAGS=-Wall -fPIC
-LFLAGS=-lm
+CFLAGS=-Wall -fPIC -I.
+LIBS=-lm
+DEPS = hsvrgb.h
+OBJ = hsvrgb.o main.o
 
-%.o: %.c %.h
-	${CC} $(LFLAGS) -c -o $@ $<
+%.o: %.c ${DEPS}
+	${CC} ${CFLAGS} -c -o $@ $<
 
 %: %.o
-	${CC} -o $@ $<
+	#${CC} ${CFLAGS} -o $@ $<
+	${CC} ${CFLAGS} -o $@ $^
 
-bar : hsvrgb.o main.o
+bar : $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
 	-rm *.o
