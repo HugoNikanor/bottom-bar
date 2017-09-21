@@ -94,6 +94,22 @@ void hsvGradient(
 	pixel [B] = rgb->b;
 }
 
+int batteryPercentage; // 0 - 100
+
+void hsvGradientPartial(
+		byte* pixel,
+		unsigned int x,
+		unsigned int y,
+		unsigned long loop)
+{
+	hsvGradient(pixel, x, y, loop);
+	if (x > batteryPercentage * (WIDTH / 100.0)) {
+		pixel [R] = 0;
+		pixel [G] = 0;
+		pixel [B] = 0;
+	}
+}
+
 int main() {
 	srandom(1);
 
@@ -110,11 +126,13 @@ int main() {
 
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
-	drawFunc = (void*) hsvGradient;
+	drawFunc = (void*) hsvGradientPartial;
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
 		if (loop % 100 == 0)
 			printf("%li\n", loop);
+
+		batteryPercentage = (loop / 10) % 100;
 
 		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {
