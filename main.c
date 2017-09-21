@@ -4,6 +4,8 @@
 // includes sleep
 #include <unistd.h>
 
+#include "hsvrgb.h"
+
 #define byte unsigned char
 
 #define B 0
@@ -73,6 +75,25 @@ void oscilatingGradient(
 	}
 }
 
+void hsvGradient(
+		byte* pixel,
+		unsigned int x,
+		unsigned int y,
+		unsigned long loop)
+{
+	// H :: 0 -> 1/3
+	// Goes from red to green via yellow
+	double h = (1.0/3) * ((double) x/WIDTH);
+
+	struct HSV hsv;
+	hsv.h = h; hsv.s = 1; hsv.v = 1;
+
+	struct RGB* rgb = hsv_to_rgb(&hsv);
+	pixel [R] = rgb->r;
+	pixel [G] = rgb->g;
+	pixel [B] = rgb->b;
+}
+
 int main() {
 	srandom(1);
 
@@ -89,16 +110,11 @@ int main() {
 
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
+	drawFunc = (void*) hsvGradient;
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
 		if (loop % 100 == 0)
 			printf("%li\n", loop);
-
-		// swap shader
-		if (loop % 2000 == 0)
-			drawFunc = (void*) &repeatingGradient;
-		if (loop % 4000 == 0)
-			drawFunc = (void*) &oscilatingGradient;
 
 		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {

@@ -16,5 +16,8 @@ OBJ = hsvrgb.o main.o
 bar : $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
+test : hsvrgb.o hsv-to-rgb-test.o
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
 clean:
 	-rm *.o
