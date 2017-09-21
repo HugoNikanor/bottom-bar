@@ -109,13 +109,13 @@ int main() {
 		}
 
 		// transfer shader to screen
-		fseek(f, (HEIGHT * WIDTH * 4) - DATA_SIZE, SEEK_SET);
+		fseek(fb, (HEIGHT * WIDTH * 4) - DATA_SIZE, SEEK_SET);
 		/* int read = */
-		fwrite(data, sizeof(byte), DATA_SIZE, f);
+		fwrite(data, sizeof(byte), DATA_SIZE, fb);
 		//printf("%i, %i\n", DATA_SIZE, read);
 
 		// sleep
 		usleep (0.004 seconds);
 	}
-	fclose(f);
+	fclose(fb);
 }
