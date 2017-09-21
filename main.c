@@ -92,7 +92,7 @@ int main() {
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
 		if (loop % 100 == 0)
-			printf("%i\n", loop);
+			printf("%li\n", loop);
 
 		// swap shader
 		if (loop % 2000 == 0)
