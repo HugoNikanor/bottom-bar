@@ -36,7 +36,7 @@ void repeatingGradient(
 		byte* pixel,
 		unsigned int x,
 		unsigned int y,
-		unsigned int loop)
+		unsigned long loop)
 {
 	pixel [B] = 0;
 	if (x % 0x200 > 0xFF && x % 0x200 < 0x200) {
@@ -52,7 +52,7 @@ void oscilatingGradient(
 		byte* pixel,
 		unsigned int x,
 		unsigned int y,
-		unsigned int loop)
+		unsigned long loop)
 {
 
 	int mloop;
@@ -84,20 +84,20 @@ int main() {
 	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
 
 	byte* data = malloc(DATA_SIZE * sizeof(byte));
-	FILE* f = fopen("/dev/fb0", "wb");
-	void (*drawFunc)(byte*, int, int, int);
+	FILE* fb = fopen("/dev/fb0", "wb");
+	void (*drawFunc)(byte*, int, int, long);
 
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
-	for (unsigned int loop = 0; ; loop++) {
+	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
 		if (loop % 100 == 0)
 			printf("%i\n", loop);
 
 		// swap shader
-		if (loop % 1000 == 0)
-			drawFunc = (void*) &repeatingGradient;
 		if (loop % 2000 == 0)
+			drawFunc = (void*) &repeatingGradient;
+		if (loop % 4000 == 0)
 			drawFunc = (void*) &oscilatingGradient;
 
 		// run shader
