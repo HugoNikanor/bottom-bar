@@ -22,53 +22,100 @@
  * Possibly some stick figures and a clock!
  */
 
+unsigned static int LINES;
+unsigned static int HEIGHT;
+unsigned static int WIDTH;
+unsigned static int FONT_HEIGHT;
+unsigned static int USABLE_LINES;
+unsigned static int DATA_SIZE;
+
 // hsv -> rgb
 // Hue Saturation Value
 
-void setColor(
+void repeatingGradient(
 		byte* pixel,
 		unsigned int x,
 		unsigned int y,
 		unsigned int loop)
 {
+	pixel [B] = 0;
 	if (x % 0x200 > 0xFF && x % 0x200 < 0x200) {
-		pixel[R] = -x;
-		pixel[G] = -x;
+		pixel [R] = -x;
+		pixel [G] = -x;
 	} else {
-		pixel[R] = x;
-		pixel[G] = x;
+		pixel [R] = x;
+		pixel [G] = x;
+	}
+}
+
+void oscilatingGradient(
+		byte* pixel,
+		unsigned int x,
+		unsigned int y,
+		unsigned int loop)
+{
+
+	int mloop;
+	if (loop % (2 * WIDTH) < WIDTH) {
+		mloop = loop % WIDTH;
+	} else {
+		mloop = WIDTH - loop % WIDTH;
+	}
+
+	pixel [R] = 0;
+	if (x > mloop) {
+		pixel [G] = 0;
+		pixel [B] = 0;
+	} else {
+		double step = 0xFF / (double) WIDTH;
+		pixel [G] = step * x;
+		pixel [B] = step * x;
 	}
 }
 
 int main() {
 	srandom(1);
-	unsigned static int LINES = 66;
-	unsigned static int HEIGHT = 800;
-	unsigned static int WIDTH = 1280;
-	unsigned static int FONT_HEIGHT = 12;
 
-	unsigned int usable_lines = HEIGHT - FONT_HEIGHT * LINES;
-	unsigned int data_size = usable_lines * WIDTH * 4;
-	byte* data = malloc(data_size * sizeof(byte));
+	LINES        = 66;
+	HEIGHT       = 800;
+	WIDTH        = 1280;
+	FONT_HEIGHT  = 12;
+	USABLE_LINES = HEIGHT - FONT_HEIGHT * LINES;
+	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
 
+	byte* data = malloc(DATA_SIZE * sizeof(byte));
 	FILE* f = fopen("/dev/fb0", "wb");
+	void (*drawFunc)(byte*, int, int, int);
 
-	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, usable_lines, data_size);
+	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
 	for (unsigned int loop = 0; ; loop++) {
+		// print loop counter
+		if (loop % 100 == 0)
+			printf("%i\n", loop);
+
+		// swap shader
+		if (loop % 1000 == 0)
+			drawFunc = (void*) &repeatingGradient;
+		if (loop % 2000 == 0)
+			drawFunc = (void*) &oscilatingGradient;
+
+		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {
-			for (unsigned int y = 0; y < usable_lines; y += 1) {
+			for (unsigned int y = 0; y < USABLE_LINES; y += 1) {
 				unsigned int i = (y * WIDTH + x) * 4;
-				setColor(data + i, x, y, loop);
+				drawFunc(data + i, x, y, loop);
 			}
 		}
 
-
-		fseek(f, (HEIGHT * WIDTH * 4) - data_size, SEEK_SET);
+		// transfer shader to screen
+		fseek(f, (HEIGHT * WIDTH * 4) - DATA_SIZE, SEEK_SET);
 		/* int read = */
-		fwrite(data, sizeof(byte), data_size, f);
-		//printf("%i, %i\n", data_size, read);
-		usleep (0.1 seconds);
+		fwrite(data, sizeof(byte), DATA_SIZE, f);
+		//printf("%i, %i\n", DATA_SIZE, read);
+
+		// sleep
+		usleep (0.004 seconds);
 	}
 	fclose(f);
 }
