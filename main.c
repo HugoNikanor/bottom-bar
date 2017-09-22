@@ -9,18 +9,12 @@
 #include <stropts.h>
 #include <linux/fb.h>
 
-#include "hsvrgb.h"
 #include "battery.h"
 #include "term_info.h"
 
-typedef unsigned char byte;
-//typedef u_int8_t byte;
+#include "common.h"
 
-#define B 0
-#define G 1
-#define R 2
-
-#define seconds * 1e6
+#include "shaders.h"
 
 batteryData batData;
 
@@ -34,126 +28,13 @@ batteryData batData;
  * Possibly some stick figures and a clock!
  */
 
-unsigned static int LINES;
-unsigned static int HEIGHT;
-unsigned static int WIDTH;
-unsigned static int FONT_HEIGHT;
-unsigned static int USABLE_LINES;
-unsigned static int DATA_SIZE;
-
-void repeatingGradient(
-		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
-{
-	pixel [B] = 0;
-	if (x % 0x200 > 0xFF && x % 0x200 < 0x200) {
-		pixel [R] = -x;
-		pixel [G] = -x;
-	} else {
-		pixel [R] = x;
-		pixel [G] = x;
-	}
-}
-
-void oscilatingGradient(
-		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
-{
-
-	int mloop;
-	if (loop % (2 * WIDTH) < WIDTH) {
-		mloop = loop % WIDTH;
-	} else {
-		mloop = WIDTH - loop % WIDTH;
-	}
-
-	pixel [R] = 0;
-	if (x > mloop) {
-		pixel [G] = 0;
-		pixel [B] = 0;
-	} else {
-		double step = 0xFF / (double) WIDTH;
-		pixel [G] = step * x;
-		pixel [B] = step * x;
-	}
-}
-
-/*
- * Would be cool if this moved right if charing,
- * and left if decharching
- *
- * loop, x, y :: passthrough from the shader
- * speed :: how many pixels it should move per tick
- * width :: width of glider (edge to edge)
- * minimum :: default colour
- */
-double gliderValueHelper(long int loop, int x, int y, int speed, int width, double minimum) {
-	(void) y;
-
-
-	int sideWidth = width / 2;
-	// peak of glider, weird stuff is to enable it to be "offscreen"
-	int highPos;
-	if (batData.status == CHARGING) {
-		highPos = ((loop * speed) % (WIDTH + width)) - sideWidth;
-	} else { // if (batData.status == DISCHARGING) {
-		highPos = WIDTH - ((loop * speed) % (WIDTH + width)) - sideWidth;
-	}
-
-
-	double diff = abs(highPos - x);
-
-	if ( diff <= sideWidth ) {
-		// higher value closer to the highPos
-		double dwidth = (double) sideWidth;
-		return minimum + ((dwidth - diff) / dwidth) * (1 - minimum);
-	} else {
-		return minimum;
-	}
-}
-
-void hsvGradient(
-		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
-{
-	// H :: 0 -> 1/3
-	// Goes from red to green via yellow
-
-	struct HSV hsv;
-	hsv.h = (1.0/3) * ((double) x/WIDTH);
-	hsv.s = 1;
-	hsv.v = gliderValueHelper(loop, x, y, 10, 70, 0.6);
-
-	struct RGB* rgb = hsv_to_rgb(&hsv);
-	pixel [R] = rgb->r;
-	pixel [G] = rgb->g;
-	pixel [B] = rgb->b;
-	free(rgb);
-}
-
-/*
- * Calls hsvGradient, but replaces with black if "outside"
- * battery range.
- */
-void batteryShader(
-		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
-{
-	hsvGradient(pixel, x, y, loop);
-	if (x > batData.rate * WIDTH) {
-		pixel [R] = 0;
-		pixel [G] = 0;
-		pixel [B] = 0;
-	}
-}
+// These should be immutable
+unsigned int LINES;
+unsigned int HEIGHT;
+unsigned int WIDTH;
+unsigned int FONT_HEIGHT;
+unsigned int USABLE_LINES;
+unsigned int DATA_SIZE;
 
 int main() {
 	srandom(1);
