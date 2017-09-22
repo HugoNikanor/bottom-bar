@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "battery.h"
 
@@ -24,4 +25,23 @@ double get_battery() {
 	fclose(currentFile);
 
 	return ratio;
+}
+
+chargeStatus get_charge_status() {
+	FILE* fullFile =
+		fopen("/sys/class/power_supply/BAT0/status", "r");
+	char str[100];
+	fscanf(fullFile, "%s", str);
+	if (strcmp(str, "Charging"))  {
+		return CHARGING;
+	} else if (strcmp(str, "Discharging")) {
+		return DISCHARGING;
+	} else {
+		return UNKWON;
+	}
+}
+
+void setBatValues(batteryData* data) {
+	data->rate = get_battery();
+	data->status = get_charge_status();
 }
