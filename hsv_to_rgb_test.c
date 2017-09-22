@@ -3,12 +3,15 @@
 #include "hsvrgb.h"
 
 void test_single(double h, double s, double v) {
-	struct HSV hsv;
+	HSV hsv = { h, s, v };
+	/*
 	hsv.h = h;
 	hsv.s = s;
 	hsv.v = v;
+	*/
 
-	struct RGB rgb = *hsv_to_rgb(&hsv);
+	RGB rgb;
+	hsv_to_rgb(&hsv, &rgb);
 
 	//printf("r: %d, g: %d, b: %d\n", rgb.r, rgb.g, rgb.b);
 	printf("r: %i, g: %i, b: %i\n", rgb.r, rgb.g, rgb.b);
@@ -39,5 +42,6 @@ void test_single_all() {
 }
 
 int main() {
-	test_single(0.321615, 1, 1);
+	//test_single(0.321615, 1, 1);
+	test_single_all();
 }

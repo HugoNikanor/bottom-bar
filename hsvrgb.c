@@ -9,10 +9,10 @@
  * taken from
  * http://www.easyrgb.com/en/math.php
  */
-struct RGB* hsv_to_rgb(struct HSV* hsv) {
+void hsv_to_rgb(HSV* hsv, RGB* rgb) {
 	double r, g, b;
 
-	struct RGB* rgb = malloc(sizeof(struct RGB));
+	//RGB* rgb = malloc(sizeof(RGB));
 	if (hsv->s == 0) {
 		r = hsv->v;
 		g = hsv->v;
@@ -62,5 +62,5 @@ struct RGB* hsv_to_rgb(struct HSV* hsv) {
 	rgb->g = g * 0xFF;
 	rgb->b = b * 0xFF;
 
-	return rgb;
+	//return rgb;
 }

@@ -5,6 +5,7 @@
 
 extern batteryData batData;
 
+// TODO should const also be noted here?
 void hsvGradient(byte*, uint, uint, ulong);
 void batteryShader(byte*, uint, uint, ulong);
 

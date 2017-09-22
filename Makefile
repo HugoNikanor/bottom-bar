@@ -15,7 +15,7 @@ OBJ = hsvrgb.o main.o battery.o term_info.o util.o bad_shaders.o battery_shader.
 bar : $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-test : hsvrgb.o hsv-to-rgb-test.o
+test : hsvrgb.o hsv_to_rgb_test.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:

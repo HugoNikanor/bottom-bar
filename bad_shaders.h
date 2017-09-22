@@ -3,6 +3,7 @@
 
 #include "shader_common.h"
 
+// TODO should const also be noted here?
 void repeatingGradient(byte*, uint, uint, ulong);
 void oscilatingGradient(byte*, uint, uint, ulong);
 

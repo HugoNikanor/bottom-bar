@@ -1,18 +1,18 @@
 #ifndef HSVRGB_HEADER
 #define HSVRGB_HEADER
 
-struct HSV {
+typedef struct {
 	double h;
 	double s;
 	double v;
-};
+} HSV;
 
-struct RGB {
+typedef struct {
 	int r;
 	int g;
 	int b;
-};
+} RGB;
 
-struct RGB* hsv_to_rgb(struct HSV* hsv);
+void hsv_to_rgb(HSV*, RGB*);
 
 #endif // HSVRGB_HEADER

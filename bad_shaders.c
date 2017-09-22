@@ -2,9 +2,9 @@
 
 void repeatingGradient(
 		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
+		const uint x,
+		const uint y,
+		const ulong loop)
 {
 	pixel [B] = 0;
 	if (x % 0x200 > 0xFF && x % 0x200 < 0x200) {
@@ -18,9 +18,9 @@ void repeatingGradient(
 
 void oscilatingGradient(
 		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
+		const uint x,
+		const uint y,
+		const ulong loop)
 {
 
 	int mloop;

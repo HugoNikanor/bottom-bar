@@ -17,7 +17,14 @@
  * width :: width of glider (edge to edge)
  * minimum :: default colour
  */
-double gliderValueHelper(long int loop, int x, int y, int speed, int width, double minimum) {
+static double gliderValueHelper(
+		const ulong loop,
+		const uint x,
+		const uint y,
+		const int speed,
+		const int width,
+		const double minimum)
+{
 	(void) y;
 
 
@@ -44,23 +51,23 @@ double gliderValueHelper(long int loop, int x, int y, int speed, int width, doub
 
 void hsvGradient(
 		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
+		const uint x,
+		const uint y,
+		const ulong loop)
 {
 	// H :: 0 -> 1/3
 	// Goes from red to green via yellow
 
-	struct HSV hsv;
+	HSV hsv;
 	hsv.h = (1.0/3) * ((double) x/WIDTH);
 	hsv.s = 1;
 	hsv.v = gliderValueHelper(loop, x, y, 10, 70, 0.6);
 
-	struct RGB* rgb = hsv_to_rgb(&hsv);
-	pixel [R] = rgb->r;
-	pixel [G] = rgb->g;
-	pixel [B] = rgb->b;
-	free(rgb);
+	RGB rgb;
+	hsv_to_rgb(&hsv, &rgb);
+	pixel [R] = rgb.r;
+	pixel [G] = rgb.g;
+	pixel [B] = rgb.b;
 }
 
 /*
@@ -69,9 +76,9 @@ void hsvGradient(
  */
 void batteryShader(
 		byte* pixel,
-		unsigned int x,
-		unsigned int y,
-		unsigned long loop)
+		const uint x,
+		const uint y,
+		const ulong loop)
 {
 	hsvGradient(pixel, x, y, loop);
 	if (x > batData.rate * WIDTH) {

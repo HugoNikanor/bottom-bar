@@ -27,7 +27,7 @@
  * Possibly some stick figures and a clock!
  */
 
-// These should be immutable
+// These are effectively const
 unsigned int LINES;
 unsigned int HEIGHT;
 unsigned int WIDTH;
@@ -68,7 +68,7 @@ int main() {
 	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
 
 	byte* data = malloc(DATA_SIZE * sizeof(byte));
-	void (*drawFunc)(byte*, int, int, long);
+	void (*drawFunc)(byte*, uint, uint, ulong);
 
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
