@@ -3,6 +3,11 @@
 
 // includes sleep
 #include <unistd.h>
+// open
+#include <fcntl.h>
+// ioctl
+#include <stropts.h>
+#include <linux/fb.h>
 
 #include "hsvrgb.h"
 #include "battery.h"
@@ -152,15 +157,23 @@ void batteryShader(
 int main() {
 	srandom(1);
 
-	LINES        = 66;
-	HEIGHT       = 800;
-	WIDTH        = 1280;
-	FONT_HEIGHT  = 12;
+	//FILE* fb = fopen("/dev/fb0", "wb");
+	int fb_fd = open("/dev/fb0", O_RDWR);
+	FILE* fb = fdopen(fb_fd, "wb");
+	struct fb_var_screeninfo vinfo;
+	ioctl(fb_fd, FBIOGET_VSCREENINFO, &vinfo);
+
+	// HOW DO I GET THE FONT SIZE!
+	// OR THE NUMBER OF LINES ON THE SCREEN!
+	LINES        = 66; // HEIGHT / FONT_HEIGHT
+	HEIGHT       = vinfo.yres; // 800
+	WIDTH        = vinfo.xres; // 1280
+	FONT_HEIGHT  = 12; // HEIGHT / LINES;
+
 	USABLE_LINES = HEIGHT - FONT_HEIGHT * LINES;
 	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
 
 	byte* data = malloc(DATA_SIZE * sizeof(byte));
-	FILE* fb = fopen("/dev/fb0", "wb");
 	void (*drawFunc)(byte*, int, int, long);
 
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
