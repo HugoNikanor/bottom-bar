@@ -1,22 +1,22 @@
-.PHONY: all clean
+.PHONY: all clean test
 
 CC=gcc
 CFLAGS=-Wall -fPIC -I.
 LIBS=-lm
-OBJ = hsvrgb.o main.o battery.o term_info.o util.o bad_shaders.o battery_shader.o
+C_FILES := $(wildcard src/*.c)
+O_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
 
-%.o: %.c
-	${CC} ${CFLAGS} -c -o $@ $<
+obj/%.o: src/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-%: %.o
-	#${CC} ${CFLAGS} -o $@ $<
-	${CC} ${CFLAGS} -o $@ $^
-
-bar : $(OBJ)
+bar : $(O_FILES)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-test : hsvrgb.o hsv_to_rgb_test.o
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+all : bar
+
+# TODO figure out how to auto compile test files
+# TODO Also figure out how to put shader files in own directory
 
 clean:
-	-rm *.o
+	-rm obj/*.o
+	-rm test/*.o

@@ -17,8 +17,8 @@ int main() {
 
 	ioctl(fb_fd, FBIOGET_VSCREENINFO, &vinfo);
 
-	printf("linelength: %li\n", finfo.line_length);
-	printf("mem-length: %li\n", finfo.smem_len);
+	printf("linelength: %i\n", finfo.line_length);
+	printf("mem-length: %i\n", finfo.smem_len);
 
 	printf("xres: %i, yres: %i\n", vinfo.xres, vinfo.yres);
 	printf("bps: %i\n", vinfo.bits_per_pixel);
