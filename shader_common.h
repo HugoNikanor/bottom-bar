@@ -1,6 +1,8 @@
 #ifndef SHADER_COMMON_HEADER
 #define SHADER_COMMON_HEADER
 
+#include "common.h"
+
 extern unsigned int LINES;
 extern unsigned int HEIGHT;
 extern unsigned int WIDTH;

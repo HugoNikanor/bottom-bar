@@ -14,9 +14,8 @@
 
 #include "common.h"
 
-#include "shaders.h"
-
-batteryData batData;
+#include "bad_shaders.h"
+#include "battery_shader.h"
 
 /*
  * Programs which display stuff on the pixels left over in a tty
@@ -35,6 +34,8 @@ unsigned int WIDTH;
 unsigned int FONT_HEIGHT;
 unsigned int USABLE_LINES;
 unsigned int DATA_SIZE;
+
+batteryData batData;
 
 int main() {
 	srandom(1);
