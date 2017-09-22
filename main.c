@@ -157,6 +157,15 @@ void batteryShader(
 int main() {
 	srandom(1);
 
+	// Some information about how to get the terminal size
+	// I'm however not sure what will be reported when started
+	// through systemd.
+	//
+	// environment $TMUX to check how to get tty name
+	// system("tty") => /dev/tty1 || /dev/pts/0
+	// system("tmux display-message -p '#{client_tty}') => /dev/tty1
+	// system("showconsolefont -iC /dev/tty1") => 8x12x256
+
 	//FILE* fb = fopen("/dev/fb0", "wb");
 	int fb_fd = open("/dev/fb0", O_RDWR);
 	FILE* fb = fdopen(fb_fd, "wb");
