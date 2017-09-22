@@ -28,20 +28,21 @@ double get_battery() {
 }
 
 chargeStatus get_charge_status() {
-	FILE* fullFile =
+	FILE* file =
 		fopen("/sys/class/power_supply/BAT0/status", "r");
 	char str[100];
-	fscanf(fullFile, "%s", str);
-	if (strcmp(str, "Charging"))  {
+	fscanf(file, "%s", str);
+	fclose(file);
+	if (strcmp(str, "Charging") == 0) {
 		return CHARGING;
-	} else if (strcmp(str, "Discharging")) {
+	} else if (strcmp(str, "Discharging") == 0) {
 		return DISCHARGING;
 	} else {
 		return UNKWON;
 	}
 }
 
-void setBatValues(batteryData* data) {
+void set_bat_values(batteryData* data) {
 	data->rate = get_battery();
 	data->status = get_charge_status();
 }

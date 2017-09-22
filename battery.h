@@ -12,6 +12,6 @@ double get_battery();
 
 chargeStatus get_charge_status();
 
-void setBatValues(batteryData*);
+void set_bat_values(batteryData*);
 
 #endif // BATTERY_HEADER

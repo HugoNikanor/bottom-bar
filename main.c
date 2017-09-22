@@ -16,6 +16,8 @@ typedef unsigned char byte;
 
 #define seconds * 1e6
 
+batteryData batData;
+
 /*
  * Programs which display stuff on the pixels left over in a tty
  * after the font has filled up as much as it cans.
@@ -89,7 +91,12 @@ double gliderValueHelper(long int loop, int x, int y, int speed, int width, doub
 
 	int sideWidth = width / 2;
 	// peak of glider, weird stuff is to enable it to be "offscreen"
-	int highPos = ((loop * speed) % (WIDTH + width)) - sideWidth;
+	int highPos;
+	if (batData.status == CHARGING) {
+		highPos = ((loop * speed) % (WIDTH + width)) - sideWidth;
+	} else { // if (batData.status == DISCHARGING) {
+		highPos = WIDTH - ((loop * speed) % (WIDTH + width)) - sideWidth;
+	}
 
 
 	double diff = abs(highPos - x);
@@ -124,8 +131,6 @@ void hsvGradient(
 	free(rgb);
 }
 
-double batteryRate; // 0 - 1
-
 /*
  * Calls hsvGradient, but replaces with black if "outside"
  * battery range.
@@ -137,7 +142,7 @@ void batteryShader(
 		unsigned long loop)
 {
 	hsvGradient(pixel, x, y, loop);
-	if (x > batteryRate * WIDTH) {
+	if (x > batData.rate * WIDTH) {
 		pixel [R] = 0;
 		pixel [G] = 0;
 		pixel [B] = 0;
@@ -166,7 +171,8 @@ int main() {
 		if (loop % 100 == 0)
 			printf("%li\n", loop);
 
-		batteryRate = get_battery();
+		batData.rate = get_battery();
+		batData.status = get_charge_status();
 
 		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {
