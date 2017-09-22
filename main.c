@@ -11,6 +11,7 @@
 
 #include "hsvrgb.h"
 #include "battery.h"
+#include "term_info.h"
 
 typedef unsigned char byte;
 //typedef u_int8_t byte;
@@ -157,27 +158,29 @@ void batteryShader(
 int main() {
 	srandom(1);
 
-	// Some information about how to get the terminal size
-	// I'm however not sure what will be reported when started
-	// through systemd.
-	//
-	// environment $TMUX to check how to get tty name
-	// system("tty") => /dev/tty1 || /dev/pts/0
-	// system("tmux display-message -p '#{client_tty}') => /dev/tty1
-	// system("showconsolefont -iC /dev/tty1") => 8x12x256
-
 	//FILE* fb = fopen("/dev/fb0", "wb");
 	int fb_fd = open("/dev/fb0", O_RDWR);
 	FILE* fb = fdopen(fb_fd, "wb");
 	struct fb_var_screeninfo vinfo;
 	ioctl(fb_fd, FBIOGET_VSCREENINFO, &vinfo);
 
-	// HOW DO I GET THE FONT SIZE!
-	// OR THE NUMBER OF LINES ON THE SCREEN!
-	LINES        = 66; // HEIGHT / FONT_HEIGHT
+	// While this work when running from a terminal,
+	// it doesn't work when running from systemd.
+	// TODO log some stuff somewhere, so I can actually
+	//      see what happens.
+	/*
+	char* ttyname = get_tty();
+	fontinfo fontinfo;
+	get_font_info(ttyname, &fontinfo);
+	free(ttyname);
+	*/
+
+	//printf("%i %i %i\n", fontinfo.height, fontinfo.width, fontinfo.chars);
+
 	HEIGHT       = vinfo.yres; // 800
 	WIDTH        = vinfo.xres; // 1280
-	FONT_HEIGHT  = 12; // HEIGHT / LINES;
+	FONT_HEIGHT  = 12; // fontinfo.height; // 12 // HEIGHT / LINES;
+	LINES        = HEIGHT / FONT_HEIGHT; // 66
 
 	USABLE_LINES = HEIGHT - FONT_HEIGHT * LINES;
 	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
