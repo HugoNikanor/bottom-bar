@@ -37,6 +37,8 @@ chargeStatus get_charge_status() {
 		return CHARGING;
 	} else if (strcmp(str, "Discharging") == 0) {
 		return DISCHARGING;
+	} else if (strcmp(str, "Full") == 0) {
+		return FULL;
 	} else {
 		return UNKWON;
 	}

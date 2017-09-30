@@ -1,7 +1,7 @@
 #ifndef BATTERY_HEADER
 #define BATTERY_HEADER
 
-typedef enum { UNKWON, CHARGING, DISCHARGING } chargeStatus;
+typedef enum { UNKWON, CHARGING, DISCHARGING, FULL } chargeStatus;
 
 typedef struct {
 	double rate;

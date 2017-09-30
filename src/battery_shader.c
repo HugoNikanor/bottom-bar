@@ -61,7 +61,9 @@ void hsvGradient(
 	HSV hsv;
 	hsv.h = (1.0/3) * ((double) x/WIDTH);
 	hsv.s = 1;
-	hsv.v = gliderValueHelper(loop, x, y, 10, 70, 0.6);
+	hsv.v = batData.status == FULL
+		? 1
+		: gliderValueHelper(loop, x, y, 10, 70, 0.6);
 
 	RGB rgb;
 	hsv_to_rgb(&hsv, &rgb);
