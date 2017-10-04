@@ -7,13 +7,22 @@
 
 #include "tetris.h"
 
+int width;
+int height;
+// Makes the board smaller, and the displayed tetraminos larger.
+// A non intereger result from (USABLE_LINES * scale) is undesirable.
+double scale = 0.5;
+
 void* game_thread(void* args) {
-	game_loop(USABLE_LINES, WIDTH);
-	//game_loop(WIDTH, USABLE_LINES);
+	game_loop(width, height);
 	puts("This should never appear!");
 }
 
 void setup_shader() {
+
+	width = USABLE_LINES * scale;
+	height = WIDTH * scale;
+
 	pthread_t cThread;
 	pthread_create(&cThread, NULL, game_thread, NULL);
 
@@ -22,19 +31,10 @@ void setup_shader() {
 }
 
 void tetris_shader(byte* pixel, uint x, uint y, ulong loop) {
-	color (*board)[USABLE_LINES] = (color (*)[USABLE_LINES]) _g_board;
+	color (*board)[width] = (color (*)[width]) _g_board;
 	
-	// x, y
-	// max, max -> 0, max
-	// 1280, 8 -> 0, 1280
-	//
-	// max, 0 -> max, max
-	// 1280, 0 -> 8, 1280
-
-	// x \in [0, 8)
-	// USABLE_LINES = 8
-	//if (board[WIDTH - x][USABLE_LINES - y] != EMPTY) {
-	//if (board[y][x] != EMPTY) {
+	int xp = x * scale;
+	int yp = y * scale;
 	switch (board[x][y]) {
 		case GREEN:
 			pixel [R] = 0;
