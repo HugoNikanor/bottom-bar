@@ -3,6 +3,9 @@
 
 #include "shader_common.h"
 
+// Make sure that this is actually defined somewhere
+// Currently it works because main defines it. And
+// that's the only place which includes this file.
 extern batteryData batData;
 
 // TODO should const also be noted here?

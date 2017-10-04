@@ -16,6 +16,7 @@
 
 #include "bad_shaders.h"
 #include "battery_shader.h"
+#include "tetris.h"
 
 /*
  * Programs which display stuff on the pixels left over in a tty
@@ -72,11 +73,15 @@ int main() {
 
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
-	drawFunc = (void*) batteryShader;
+	setup_shader();
+
+	drawFunc = (void*) tetris_shader;
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
+		/*
 		if (loop % 100 == 0)
 			printf("%li\n", loop);
+			*/
 
 		batData.rate = get_battery();
 		batData.status = get_charge_status();
