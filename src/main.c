@@ -16,7 +16,7 @@
 
 #include "bad_shaders.h"
 #include "battery_shader.h"
-#include "tetris.h"
+#include "tetris_shader.h"
 
 /*
  * Programs which display stuff on the pixels left over in a tty

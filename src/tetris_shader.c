@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 
-#include "game.h"
+#include <tetris.h>
 
-#include "tetris.h"
+#include "tetris_shader.h"
 
 int width;
 int height;
@@ -35,7 +35,7 @@ void tetris_shader(byte* pixel, uint x, uint y, ulong loop) {
 	
 	int xp = x * scale;
 	int yp = y * scale;
-	switch (board[x][y]) {
+	switch (board[xp][yp]) {
 		case GREEN:
 			pixel [R] = 0;
 			pixel [G] = 0xFF;
