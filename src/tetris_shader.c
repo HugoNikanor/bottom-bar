@@ -14,8 +14,9 @@ int height;
 double scale = 0.5;
 
 void* game_thread(void* args) {
-	game_loop(width, height);
+	game_loop(width, height, 1, &move_generator);
 	puts("This should never appear!");
+	return NULL;
 }
 
 void setup_shader() {
