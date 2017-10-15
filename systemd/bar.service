@@ -1,0 +1,9 @@
+[Unit]
+Description=Bottom bar
+
+[Service]
+ExecStart=/home/hugo/code/c/bottom-bar/bar
+Restart=always
+
+[Install]
+WantedBy=default.target
