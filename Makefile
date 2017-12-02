@@ -1,8 +1,8 @@
 .PHONY: all clean test install_user
 
 CC=gcc
-CFLAGS=-Wall -fPIC -I.
-LIBS=-lm
+CFLAGS=-Wall -fPIC -pthread -pedantic -I. -I../libtetris/src -ggdb
+LIBS=-L../libtetris/ -ltetris -lm
 C_FILES := $(wildcard src/*.c)
 O_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
 
