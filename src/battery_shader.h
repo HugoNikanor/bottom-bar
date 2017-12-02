@@ -8,6 +8,8 @@
 // that's the only place which includes this file.
 extern batteryData batData;
 
+void init_shader ();
+
 // TODO should const also be noted here?
 void hsvGradient(byte*, uint, uint, ulong);
 void batteryShader(byte*, uint, uint, ulong);

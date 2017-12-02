@@ -74,8 +74,10 @@ int main() {
 	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
 
 	setup_shader();
+	init_shader();
 
-	drawFunc = (void*) tetris_shader;
+	//drawFunc = (void*) tetris_shader;
+	drawFunc = batteryShader;
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
 		/*
