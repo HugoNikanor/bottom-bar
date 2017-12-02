@@ -155,3 +155,9 @@ void batteryShader(
 		pixel [B] = 0;
 	}
 }
+
+void create_battery_shader (shader* sh) {
+	sh->init = init_shader;
+	sh->shader = batteryShader;
+}
+

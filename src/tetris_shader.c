@@ -79,3 +79,9 @@ void tetris_shader(byte* pixel, uint x, uint y, ulong loop) {
 			pixel [B] = 0;
 	}
 }
+
+void create_tetris_shader (shader* sh) {
+	sh->init = setup_shader;
+	sh->shader = tetris_shader;
+}
+

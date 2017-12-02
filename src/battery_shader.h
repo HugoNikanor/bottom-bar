@@ -14,4 +14,6 @@ void init_shader ();
 void hsvGradient(byte*, uint, uint, ulong);
 void batteryShader(byte*, uint, uint, ulong);
 
+void create_battery_shader(shader*);
+
 #endif // BATTER_SHADER_HEADER
