@@ -23,6 +23,12 @@ install_user: bar
 	systemctl enable --user bar
 	systemctl start --user bar
 
+install: bar
+	cp systemd/bar.service /etc/systemd/system/bottom-bar.service
+	cp bar /usr/bin/bottom-bar
+	systemctl enable bottom-bar
+	systemctl start bottom-bar
+
 # TODO figure out how to auto compile test files
 # TODO Also figure out how to put shader files in own directory
 
