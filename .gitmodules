@@ -1,0 +1,4 @@
+[submodule "lib/libtetris"]
+	path = lib/libtetris
+	url = gh:hugonikanor/libtetris.git
+	branch = master
