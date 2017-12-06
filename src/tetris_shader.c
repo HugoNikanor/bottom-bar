@@ -14,7 +14,13 @@ int height;
 double scale = 0.5;
 
 void* game_thread(void* args) {
-	game_loop(width, height, 1, &move_generator);
+	tetris_settings settings = {
+		.width = width,
+		.height = height,
+		.dropspeed = 1,
+		.move_func = &move_generator
+	};
+	game_loop(&settings);
 	puts("This should never appear!");
 	return NULL;
 }

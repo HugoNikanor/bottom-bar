@@ -1,18 +1,22 @@
 .PHONY: all clean test install_user
 
 CC=gcc
-CFLAGS=-Wall -fPIC -pthread -pedantic -I. -I../libtetris/src -ggdb
-LIBS=-L../libtetris/ -ltetris -lm
+CFLAGS=-Wall -fPIC -pthread -pedantic -I. -Ilib/libtetris/src -ggdb
+LIBS=-Llib/libtetris -ltetris -lm
 C_FILES := $(wildcard src/*.c)
 O_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
+LIB_FILES := lib/libtetris/libtetris.a
+
+all : bar
 
 obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-bar : $(O_FILES)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+lib/libtetris/libtetris.a :
+	make -C lib/libtetris/ libtetris.a
 
-all : bar
+bar : $(O_FILES) $(LIB_FILES)
+	$(CC) $(CFLAGS) $(LIBS) -o $@ $^ 
 
 install_user: bar
 	cp systemd/bar.service $$HOME/.config/systemd/user/bar.service
@@ -25,3 +29,4 @@ install_user: bar
 clean:
 	-rm obj/*.o
 	-rm test/*.o
+	-make -C lib/libtetris/ clean
