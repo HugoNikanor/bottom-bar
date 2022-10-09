@@ -1,11 +1,21 @@
+#include "tetris_shader.h"
+
 #include <unistd.h>
 #include <pthread.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <tetris.h>
 
-#include "tetris_shader.h"
+struct tetris_shader {
+	shader shader;
+	pthread_t thread;
+};
+
+static void init_shader(tetris_shader*);
+static void free_shader(tetris_shader*);
+static void run_shader(tetris_shader*, byte pixel[4], uint x, uint y, ulong loop);
 
 int width;
 int height;
@@ -25,19 +35,23 @@ void* game_thread(void* args) {
 	return NULL;
 }
 
-void setup_shader() {
+static void init_shader(tetris_shader *shader) {
 
 	width = USABLE_LINES * scale;
 	height = WIDTH * scale;
 
-	pthread_t cThread;
-	pthread_create(&cThread, NULL, game_thread, NULL);
+	pthread_create(&shader->thread, NULL, game_thread, NULL);
 
 	while(_g_board_live != true)
 		usleep(100000);
 }
 
-void tetris_shader(byte pixel[4], uint x, uint y, ulong loop) {
+static void free_shader(tetris_shader *shader) {
+	pthread_cancel(shader->thread);
+	free(shader);
+}
+
+static void run_shader(tetris_shader *shader, byte pixel[4], uint x, uint y, ulong loop) {
 	color (*board)[width] = (color (*)[width]) _g_board;
 	
 	int xp = x * scale;
@@ -86,8 +100,11 @@ void tetris_shader(byte pixel[4], uint x, uint y, ulong loop) {
 	}
 }
 
-void create_tetris_shader (shader* sh) {
-	sh->init = setup_shader;
-	sh->shader = tetris_shader;
+shader *create_tetris_shader () {
+	tetris_shader *sh = malloc(sizeof(*sh));
+	sh->shader.init = (init_t) init_shader;
+	sh->shader.cleanup = (cleanup_t) free_shader;
+	sh->shader.shader = (run_t) run_shader;
+	return (shader*) sh;
 }
 

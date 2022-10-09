@@ -13,9 +13,4 @@ typedef unsigned char byte;
 
 #define seconds * 1e6
 
-typedef struct {
-	void (*init)();
-	void (*shader)(byte[4], uint, uint, ulong);
-} shader;
-
 #endif // COMMON_HEADER

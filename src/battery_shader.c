@@ -6,12 +6,27 @@
 
 #include "battery_shader.h"
 
-//RGB* high_colors[WIDTH];
-//RGB* low_colors [WIDTH];
+struct battery_shader {
+	shader shader;
+	//RGB* high_colors[WIDTH];
+	//RGB* low_colors [WIDTH];
+	// List of RGB pointers
+	RGB *high_colors;
+	RGB *low_colors ;
+};
 
-// List of RGB pointers
-RGB** high_colors;
-RGB** low_colors ;
+// Make sure that this is actually defined somewhere
+// Currently it works because main defines it. And
+// that's the only place which includes this file.
+extern batteryData batData;
+
+
+static void init_shader (battery_shader*);
+static void free_shader(battery_shader*);
+
+// TODO should const also be noted here?
+static void hsvGradient(battery_shader*, byte[4], uint, uint, ulong);
+static void run_shader(battery_shader*, byte[4], uint, uint, ulong);
 
 static int getHighPos(int, int, int);
 
@@ -80,14 +95,14 @@ static int getHighPos(int loop, int speed, int glider_width) {
 /*
  * TODO clean up obejects
  */
-void init_shader () {
+static void init_shader (battery_shader *shader) {
 
 	//RGB* high_colors[WIDTH];
 	//RGB* low_colors [WIDTH];
 
 	// List of RGB pointers
-	high_colors = malloc(sizeof(RGB*) * WIDTH);
-	low_colors  = malloc(sizeof(RGB*) * WIDTH);
+	shader->high_colors = malloc(sizeof(RGB) * WIDTH);
+	shader->low_colors  = malloc(sizeof(RGB) * WIDTH);
 
 	HSV hsv;
 
@@ -96,18 +111,25 @@ void init_shader () {
 		hsv.s = 1;
 		hsv.v = 0.6;
 
-		RGB* rgb1 = malloc(sizeof(*rgb1));
-		hsv_to_rgb (&hsv, rgb1);
-		low_colors [x] = rgb1;
+		RGB rgb1;
+		hsv_to_rgb (&hsv, &rgb1);
+		shader->low_colors [x] = rgb1;
 
-		RGB* rgb2 = malloc(sizeof(*rgb2));
+		RGB rgb2;
 		hsv.v = 1;
-		hsv_to_rgb (&hsv, rgb2);
-		high_colors [x] = rgb2;
+		hsv_to_rgb (&hsv, &rgb2);
+		shader->high_colors [x] = rgb2;
 	}
 }
 
-void hsvGradient(
+static void free_shader(battery_shader *shader) {
+	free (shader->high_colors);
+	free (shader->low_colors);
+	free (shader);
+}
+
+static void hsvGradient(
+		battery_shader *shader,
 		byte pixel[4],
 		const uint x,
 		const uint y,
@@ -122,7 +144,7 @@ void hsvGradient(
 
 	double vval;
 	if (batData.status == FULL) {
-		rgb = *high_colors [x];
+		rgb = shader->high_colors [x];
 	} else if ( (vval = gliderValueHelper(loop, x, y, 10, 70, 0.7, highPos)) != -1 ) {
 		HSV hsv;
 		hsv.h = (1.0/3) * ((double) x/WIDTH);
@@ -130,7 +152,7 @@ void hsvGradient(
 		hsv.v = gliderValueHelper(loop, x, y, 10, 70, 0.6, highPos);
 		hsv_to_rgb(&hsv, &rgb);
 	} else {
-		rgb = *low_colors [x];
+		rgb = shader->low_colors [x];
 	}
 
 	pixel [R] = rgb.r;
@@ -142,13 +164,14 @@ void hsvGradient(
  * Calls hsvGradient, but replaces with black if "outside"
  * battery range.
  */
-void batteryShader(
+static void run_shader(
+		battery_shader *shader,
 		byte pixel[4],
 		const uint x,
 		const uint y,
 		const ulong loop)
 {
-	hsvGradient(pixel, x, y, loop);
+	hsvGradient(shader, pixel, x, y, loop);
 	if (x > batData.rate * WIDTH) {
 		pixel [R] = 0;
 		pixel [G] = 0;
@@ -156,8 +179,10 @@ void batteryShader(
 	}
 }
 
-void create_battery_shader (shader* sh) {
-	sh->init = init_shader;
-	sh->shader = batteryShader;
+shader *create_battery_shader () {
+	battery_shader *sh = malloc(sizeof(*sh));
+	sh->shader.init = (init_t) init_shader;
+	sh->shader.cleanup = (cleanup_t) free_shader;
+	sh->shader.shader = (run_t) run_shader;
+	return (shader*) sh;
 }
-

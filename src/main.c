@@ -83,20 +83,21 @@ int main() {
 	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
 
 	byte (*data)[WIDTH][4] = (byte (*)[WIDTH][4]) calloc(DATA_SIZE, sizeof(byte));
-	void (*drawFunc)(byte[4], uint, uint, ulong);
 
 	printf("Monitor size = %ix%i\n", WIDTH, HEIGHT);
 	printf("Font height = %i\n", FONT_HEIGHT);
 	printf("usable lines = %i\n", USABLE_LINES);
 
-	shader sh;
 
-	// this should possibly be set in config,
-	// or something
-	create_battery_shader (&sh);
+	shader *sh;
+	// this should possibly be set in config, or something
+#if 0
+	sh = create_battery_shader ();
+#else
+	sh = create_tetris_shader();
+#endif
 
-	sh.init();
-	drawFunc = sh.shader;
+	sh->init(sh);
 
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
@@ -111,7 +112,7 @@ int main() {
 		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {
 			for (unsigned int y = 0; y < USABLE_LINES; y += 1) {
-				drawFunc(data[y][x], x, y, loop);
+				(sh->shader)(sh, data[y][x], x, y, loop);
 			}
 		}
 
@@ -126,5 +127,7 @@ int main() {
 		usleep (0.04 seconds); // 25 FPS
 		//usleep (1 seconds);
 	}
+	sh->cleanup(sh);
+	free(data);
 	fclose(fb);
 }

@@ -3,9 +3,9 @@
 
 #include "shader_common.h"
 
-void setup_shader();
-void tetris_shader(byte pixel[4], uint x, uint y, ulong loop);
+shader *create_tetris_shader();
 
-void create_tetris_shader(shader*);
+struct tetris_shader;
+typedef struct tetris_shader tetris_shader;
 
 #endif // TETRIS_SHADER_HEADER
