@@ -30,19 +30,13 @@
  * Possibly some stick figures and a clock!
  */
 
-// These are effectively const
-unsigned int LINES;
-unsigned int HEIGHT;
-unsigned int WIDTH;
-unsigned int FONT_HEIGHT;
-unsigned int USABLE_LINES;
-unsigned int DATA_SIZE;
 
 batteryData batData;
 
 #define USE_FONTINFO 1
 
 int main() {
+
 	srandom(1);
 
 	struct fb_var_screeninfo vinfo;
@@ -71,24 +65,25 @@ int main() {
 
 	//printf("%i %i %i\n", fontinfo.height, fontinfo.width, fontinfo.chars);
 
-	HEIGHT       = vinfo.yres; // 800
-	WIDTH        = vinfo.xres; // 1280
-	FONT_HEIGHT  =
+	unsigned int screen_height = vinfo.yres; // 800
+	unsigned int screen_width  = vinfo.xres; // 1280
+	unsigned int font_height  =
 #if USE_FONTINFO
-		fontinfo.height; // 12 // HEIGHT / LINES;
+		fontinfo.height; // 12
 #else
 		16;
 #endif
-	LINES        = HEIGHT / FONT_HEIGHT; // 66
+	unsigned int text_lines = screen_height / font_height; // 66
+	unsigned int usable_lines = screen_height - font_height * text_lines;
 
-	USABLE_LINES = HEIGHT - FONT_HEIGHT * LINES;
-	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
+	unsigned int screen_size = screen_width * screen_height * 4;
+	unsigned int usable_size = screen_width * usable_lines * 4;
 
-	byte (*data)[WIDTH][4] = (byte (*)[WIDTH][4]) calloc(DATA_SIZE, sizeof(byte));
+	byte (*data)[screen_width][4] = (byte (*)[screen_width][4]) calloc(usable_size, sizeof(byte));
 
-	printf("Monitor size = %ix%i\n", WIDTH, HEIGHT);
-	printf("Font height = %i\n", FONT_HEIGHT);
-	printf("usable lines = %i\n", USABLE_LINES);
+	printf("Monitor size = %ix%i\n", screen_width, screen_height);
+	printf("Font height = %i\n", font_height);
+	printf("usable lines = %i\n", usable_lines);
 
 
 	shader *sh;
@@ -99,7 +94,7 @@ int main() {
 	sh = create_tetris_shader();
 #endif
 
-	sh->init(sh);
+	sh->init(sh, screen_width, usable_lines);
 
 	for (unsigned long loop = 0; ; loop++) {
 		// print loop counter
@@ -112,16 +107,16 @@ int main() {
 		batData.status = get_charge_status();
 
 		// run shader
-		for (unsigned int x = 0; x < WIDTH; x++) {
-			for (unsigned int y = 0; y < USABLE_LINES; y += 1) {
+		for (unsigned int x = 0; x < screen_width; x++) {
+			for (unsigned int y = 0; y < usable_lines; y += 1) {
 				(sh->shader)(sh, data[y][x], x, y, loop);
 			}
 		}
 
 		// transfer shader to screen
-		fseek(fb, (HEIGHT * WIDTH * 4) - DATA_SIZE, SEEK_SET);
+		fseek(fb, screen_size - usable_size, SEEK_SET);
 		/* int read = */
-		fwrite(data, sizeof(byte), DATA_SIZE, fb);
+		fwrite(data, sizeof(byte), usable_size, fb);
 		//printf("%i, %i\n", DATA_SIZE, read);
 
 		// sleep

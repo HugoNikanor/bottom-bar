@@ -16,6 +16,7 @@ void repeatingGradient(
 	}
 }
 
+#if 0
 void oscilatingGradient(
 		byte pixel[4],
 		const uint x,
@@ -40,3 +41,4 @@ void oscilatingGradient(
 		pixel [B] = step * x;
 	}
 }
+#endif

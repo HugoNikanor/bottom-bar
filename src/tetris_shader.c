@@ -13,14 +13,14 @@ struct tetris_shader {
 	pthread_t thread;
 };
 
-static void init_shader(tetris_shader*);
+static void init_shader(tetris_shader*, unsigned int, unsigned int);
 static void free_shader(tetris_shader*);
 static void run_shader(tetris_shader*, byte pixel[4], uint x, uint y, ulong loop);
 
 int width;
 int height;
 // Makes the board smaller, and the displayed tetraminos larger.
-// A non intereger result from (USABLE_LINES * scale) is undesirable.
+// A non intereger result from (usable_lines * scale) is undesirable.
 double scale = 0.5;
 
 void* game_thread(void* args) {
@@ -35,10 +35,9 @@ void* game_thread(void* args) {
 	return NULL;
 }
 
-static void init_shader(tetris_shader *shader) {
-
-	width = USABLE_LINES * scale;
-	height = WIDTH * scale;
+static void init_shader(tetris_shader *shader, unsigned int width, unsigned int height) {
+	shader->shader.width = width * scale;
+	shader->shader.height = height * scale;
 
 	pthread_create(&shader->thread, NULL, game_thread, NULL);
 

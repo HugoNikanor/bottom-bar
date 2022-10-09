@@ -8,8 +8,6 @@
 
 struct battery_shader {
 	shader shader;
-	//RGB* high_colors[WIDTH];
-	//RGB* low_colors [WIDTH];
 	// List of RGB pointers
 	RGB *high_colors;
 	RGB *low_colors ;
@@ -21,14 +19,14 @@ struct battery_shader {
 extern batteryData batData;
 
 
-static void init_shader (battery_shader*);
+static void init_shader(battery_shader*, unsigned int, unsigned int);
 static void free_shader(battery_shader*);
 
 // TODO should const also be noted here?
 static void hsvGradient(battery_shader*, byte[4], uint, uint, ulong);
 static void run_shader(battery_shader*, byte[4], uint, uint, ulong);
 
-static int getHighPos(int, int, int);
+static int getHighPos(int, int, int, unsigned int);
 
 /*
  * Would be cool if this moved right if charing,
@@ -80,14 +78,14 @@ static double gliderValueHelper(
  * glider widith and glide speed should possibly
  * be set as semi global values instead.
  */
-static int getHighPos(int loop, int speed, int glider_width) {
+static int getHighPos(int loop, int speed, int glider_width, unsigned int screen_width) {
 	int sideWidth = glider_width / 2;
 
 	int highPos;
 	if (batData.status == CHARGING) {
-		highPos = ((loop * speed) % (WIDTH + glider_width)) - sideWidth;
+		highPos = ((loop * speed) % (screen_width + glider_width)) - sideWidth;
 	} else { // if (batData.status == DISCHARGING) {
-		highPos = WIDTH - ((loop * speed) % (WIDTH + glider_width)) - sideWidth;
+		highPos = screen_width - ((loop * speed) % (screen_width + glider_width)) - sideWidth;
 	}
 	return highPos;
 }
@@ -95,19 +93,19 @@ static int getHighPos(int loop, int speed, int glider_width) {
 /*
  * TODO clean up obejects
  */
-static void init_shader (battery_shader *shader) {
+static void init_shader(battery_shader *shader,
+		unsigned int width, unsigned int height) {
 
-	//RGB* high_colors[WIDTH];
-	//RGB* low_colors [WIDTH];
+	shader->shader.width = width;
 
 	// List of RGB pointers
-	shader->high_colors = malloc(sizeof(RGB) * WIDTH);
-	shader->low_colors  = malloc(sizeof(RGB) * WIDTH);
+	shader->high_colors = malloc(sizeof(RGB) * width);
+	shader->low_colors  = malloc(sizeof(RGB) * width);
 
 	HSV hsv;
 
-	for (int x = 0; x < WIDTH; x++) {
-		hsv.h = (1.0/3) * ((double) x/WIDTH);
+	for (int x = 0; x < width; x++) {
+		hsv.h = (1.0/3) * ((double) x/width);
 		hsv.s = 1;
 		hsv.v = 0.6;
 
@@ -138,7 +136,7 @@ static void hsvGradient(
 	// H :: 0 -> 1/3
 	// Goes from red to green via yellow
 
-	int highPos = getHighPos (loop, 10, 70);
+	int highPos = getHighPos (loop, 10, 70, shader->shader.width);
 
 	RGB rgb;
 
@@ -147,7 +145,7 @@ static void hsvGradient(
 		rgb = shader->high_colors [x];
 	} else if ( (vval = gliderValueHelper(loop, x, y, 10, 70, 0.7, highPos)) != -1 ) {
 		HSV hsv;
-		hsv.h = (1.0/3) * ((double) x/WIDTH);
+		hsv.h = (1.0/3) * ((double) x/shader->shader.width);
 		hsv.s = 1;
 		hsv.v = gliderValueHelper(loop, x, y, 10, 70, 0.6, highPos);
 		hsv_to_rgb(&hsv, &rgb);
@@ -172,7 +170,7 @@ static void run_shader(
 		const ulong loop)
 {
 	hsvGradient(shader, pixel, x, y, loop);
-	if (x > batData.rate * WIDTH) {
+	if (x > batData.rate * shader->shader.width) {
 		pixel [R] = 0;
 		pixel [G] = 0;
 		pixel [B] = 0;
