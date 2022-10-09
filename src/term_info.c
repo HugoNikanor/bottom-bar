@@ -9,27 +9,23 @@
 void get_font_info(char* terminal, fontinfo* info) {
 
 	char cmd[80];
-	strcpy(cmd, "showconsolefont -iC ");
-	strcat(cmd, terminal);
-	FILE* fp;
-	fp = popen(cmd, "r");
+	snprintf(cmd, sizeof(cmd),
+			"showconsolefont -iC %s",
+			terminal);
+	FILE* fp = popen(cmd, "r");
 	if (fp == NULL) {
-		/*
-		printf("Failed to run command\n");
-		exit(1);
-		*/
 		info->width  = -1;
 		info->height = -1;
 		info->chars  = -1;
+	} else {
+		int a, b, c;
+		fscanf(fp, "%ix%ix%i", &a, &b, &c);
+		pclose(fp);
+
+		info->width  = a;
+		info->height = b;
+		info->chars  = c;
 	}
-
-	int a, b, c;
-	fscanf(fp, "%ix%ix%i", &a, &b, &c);
-	pclose(fp);
-
-	info->width  = a;
-	info->height = b;
-	info->chars  = c;
 }
 
 /*
@@ -39,7 +35,7 @@ void get_font_info(char* terminal, fontinfo* info) {
  * Note that this might fail horribly if no tty is available in the
  * ways mentioned above;
  */
-char* get_tty() {
+char *get_tty() {
 	// environment $TMUX to check how to get tty name
 	// system("tty") => /dev/tty1 || /dev/pts/0
 	// system("tmux display-message -p '#{client_tty}') => /dev/tty1

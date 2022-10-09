@@ -90,15 +90,11 @@ static int getHighPos(int loop, int speed, int glider_width, unsigned int screen
 	return highPos;
 }
 
-/*
- * TODO clean up obejects
- */
 static void init_shader(battery_shader *shader,
 		unsigned int width, unsigned int height) {
 
 	shader->shader.width = width;
 
-	// List of RGB pointers
 	shader->high_colors = malloc(sizeof(RGB) * width);
 	shader->low_colors  = malloc(sizeof(RGB) * width);
 

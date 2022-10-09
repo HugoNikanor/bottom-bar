@@ -30,7 +30,6 @@
  * Possibly some stick figures and a clock!
  */
 
-
 batteryData batData;
 
 #define USE_FONTINFO 1
@@ -79,7 +78,7 @@ int main() {
 	unsigned int screen_size = screen_width * screen_height * 4;
 	unsigned int usable_size = screen_width * usable_lines * 4;
 
-	byte (*data)[screen_width][4] = (byte (*)[screen_width][4]) calloc(usable_size, sizeof(byte));
+	byte (*data)[screen_width][4] = calloc(usable_size, sizeof(byte));
 
 	printf("Monitor size = %ix%i\n", screen_width, screen_height);
 	printf("Font height = %i\n", font_height);
@@ -97,32 +96,21 @@ int main() {
 	sh->init(sh, screen_width, usable_lines);
 
 	for (unsigned long loop = 0; ; loop++) {
-		// print loop counter
-		/*
-		if (loop % 100 == 0)
-			printf("%li\n", loop);
-			*/
-
 		batData.rate = get_battery();
 		batData.status = get_charge_status();
 
 		// run shader
 		for (unsigned int x = 0; x < screen_width; x++) {
-			for (unsigned int y = 0; y < usable_lines; y += 1) {
+			for (unsigned int y = 0; y < usable_lines; y++) {
 				(sh->shader)(sh, data[y][x], x, y, loop);
 			}
 		}
 
 		// transfer shader to screen
 		fseek(fb, screen_size - usable_size, SEEK_SET);
-		/* int read = */
 		fwrite(data, sizeof(byte), usable_size, fb);
-		//printf("%i, %i\n", DATA_SIZE, read);
 
-		// sleep
-		//usleep (0.004 seconds);
 		usleep (0.04 seconds); // 25 FPS
-		//usleep (1 seconds);
 	}
 	sh->cleanup(sh);
 	free(data);

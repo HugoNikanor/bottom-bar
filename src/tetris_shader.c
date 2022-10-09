@@ -42,7 +42,7 @@ static void init_shader(tetris_shader *shader, unsigned int width, unsigned int 
 	pthread_create(&shader->thread, NULL, game_thread, NULL);
 
 	while(_g_board_live != true)
-		usleep(100000);
+		usleep(0.1 seconds);
 }
 
 static void free_shader(tetris_shader *shader) {

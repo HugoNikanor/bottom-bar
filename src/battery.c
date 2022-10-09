@@ -26,8 +26,7 @@ double get_battery() {
 }
 
 chargeStatus get_charge_status() {
-	FILE* file =
-		fopen("/sys/class/power_supply/BAT0/status", "r");
+	FILE* file = fopen("/sys/class/power_supply/BAT0/status", "r");
 	char str[100];
 	fscanf(file, "%s", str);
 	fclose(file);
