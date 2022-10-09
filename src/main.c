@@ -6,7 +6,7 @@
 // open
 #include <fcntl.h>
 // ioctl
-#include <stropts.h>
+#include <sys/ioctl.h>
 #include <linux/fb.h>
 
 #include "battery.h"
