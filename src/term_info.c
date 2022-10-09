@@ -1,8 +1,8 @@
+#define _POSIX_C_SORUCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "util.h"
 
 #include "term_info.h"
 
@@ -64,7 +64,7 @@ char* get_tty() {
 	getline(&ret, &len, fp);
 	pclose(fp);
 
-	replace_line_break_with_null(ret);
+	ret[strnlen(ret, len) - 1] = '\0';
 
 	return ret;
 }
