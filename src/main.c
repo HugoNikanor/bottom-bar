@@ -45,16 +45,18 @@ batteryData batData;
 int main() {
 	srandom(1);
 
-	//FILE* fb = fopen("/dev/fb0", "wb");
-	int fb_fd = open("/dev/fb0", O_RDWR);
-	if (fb_fd == -1) {
-		printf("Opening framebuffer failed (%i) %s\n",
-				errno, strerror(errno));
-		return errno;
-	}
-	FILE* fb = fdopen(fb_fd, "wb");
 	struct fb_var_screeninfo vinfo;
-	ioctl(fb_fd, FBIOGET_VSCREENINFO, &vinfo);
+	FILE *fb;
+	{
+		int fb_fd = open("/dev/fb0", O_RDWR);
+		if (fb_fd == -1) {
+			printf("Opening framebuffer failed (%i) %s\n",
+					errno, strerror(errno));
+			return errno;
+		}
+		fb = fdopen(fb_fd, "wb");
+		ioctl(fb_fd, FBIOGET_VSCREENINFO, &vinfo);
+	}
 
 	// While this work when running from a terminal,
 	// it doesn't work when running from systemd.
@@ -91,7 +93,7 @@ int main() {
 
 	shader *sh;
 	// this should possibly be set in config, or something
-#if 0
+#if 1
 	sh = create_battery_shader ();
 #else
 	sh = create_tetris_shader();

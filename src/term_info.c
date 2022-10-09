@@ -45,14 +45,13 @@ char* get_tty() {
 	// system("tmux display-message -p '#{client_tty}') => /dev/tty1
 	// system("showconsolefont -iC /dev/tty1") => 8x12x256
 
-	char* cmd = malloc(40 * sizeof(char));
+	const char* cmd;
 	if (getenv("TMUX") != NULL) {
 		cmd = "tmux display-message -p '#{client_tty}'";
 	} else {
 		cmd = "tty";
 	}
-	FILE* fp;
-	fp = popen(cmd, "r");
+	FILE* fp = popen(cmd, "r");
 	if (fp == NULL) {
 		/*
 		printf("Failed to run command\n");

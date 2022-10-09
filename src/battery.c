@@ -9,10 +9,8 @@
  * and doesn't keep the file handlers
  */
 double get_battery() {
-	FILE* fullFile =
-		fopen("/sys/class/power_supply/BAT0/charge_full", "r");
-	FILE* currentFile =
-		fopen("/sys/class/power_supply/BAT0/charge_now", "r");
+	FILE* fullFile    = fopen("/sys/class/power_supply/BAT0/charge_full", "r");
+	FILE* currentFile = fopen("/sys/class/power_supply/BAT0/charge_now", "r");
 
 	int full, current;
 	fscanf(fullFile, "%i", &full);
