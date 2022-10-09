@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 // includes sleep
 #include <unistd.h>
@@ -43,6 +45,11 @@ int main() {
 
 	//FILE* fb = fopen("/dev/fb0", "wb");
 	int fb_fd = open("/dev/fb0", O_RDWR);
+	if (fb_fd == -1) {
+		printf("Opening framebuffer failed (%i) %s\n",
+				errno, strerror(errno));
+		return errno;
+	}
 	FILE* fb = fdopen(fb_fd, "wb");
 	struct fb_var_screeninfo vinfo;
 	ioctl(fb_fd, FBIOGET_VSCREENINFO, &vinfo);
