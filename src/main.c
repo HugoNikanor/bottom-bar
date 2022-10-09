@@ -78,7 +78,9 @@ int main() {
 	byte* data = malloc(DATA_SIZE * sizeof(byte));
 	void (*drawFunc)(byte*, uint, uint, ulong);
 
-	printf("WIDTH: %i\tusable_lines: %i\tdata_size: %i\n", WIDTH, USABLE_LINES, DATA_SIZE);
+	printf("Monitor size = %ix%i\n", WIDTH, HEIGHT);
+	printf("Font height = %i\n", FONT_HEIGHT);
+	printf("usable lines = %i\n", USABLE_LINES);
 
 	shader sh;
 
