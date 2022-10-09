@@ -8,6 +8,10 @@ Currently it can display both a battery indicator, and a
 game of Tetris, but requires recompilation to change between
 them.
 
-It also currently is hard coded to fit my laptop screen and
-font. So that might be a problem if your screen isn't
-1280x800 pixels large and use a font of 8x12 px.
+Changing terminal font
+----------------------
+On Linux, run
+
+    setfont <fontname>
+
+Fonts will probably be found in `/usr/share/kbd/consolefonts/`.
