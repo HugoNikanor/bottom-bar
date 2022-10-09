@@ -1,7 +1,7 @@
 #include "bad_shaders.h"
 
 void repeatingGradient(
-		byte* pixel,
+		byte pixel[4],
 		const uint x,
 		const uint y,
 		const ulong loop)
@@ -17,7 +17,7 @@ void repeatingGradient(
 }
 
 void oscilatingGradient(
-		byte* pixel,
+		byte pixel[4],
 		const uint x,
 		const uint y,
 		const ulong loop)

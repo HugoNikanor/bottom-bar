@@ -15,7 +15,7 @@ typedef unsigned char byte;
 
 typedef struct {
 	void (*init)();
-	void (*shader)(byte*, uint, uint, ulong);
+	void (*shader)(byte[4], uint, uint, ulong);
 } shader;
 
 #endif // COMMON_HEADER

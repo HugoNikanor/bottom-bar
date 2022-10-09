@@ -82,8 +82,8 @@ int main() {
 	USABLE_LINES = HEIGHT - FONT_HEIGHT * LINES;
 	DATA_SIZE    = USABLE_LINES * WIDTH * 4;
 
-	byte* data = malloc(DATA_SIZE * sizeof(byte));
-	void (*drawFunc)(byte*, uint, uint, ulong);
+	byte (*data)[WIDTH][4] = (byte (*)[WIDTH][4]) calloc(DATA_SIZE, sizeof(byte));
+	void (*drawFunc)(byte[4], uint, uint, ulong);
 
 	printf("Monitor size = %ix%i\n", WIDTH, HEIGHT);
 	printf("Font height = %i\n", FONT_HEIGHT);
@@ -111,8 +111,7 @@ int main() {
 		// run shader
 		for (unsigned int x = 0; x < WIDTH; x++) {
 			for (unsigned int y = 0; y < USABLE_LINES; y += 1) {
-				unsigned int i = (y * WIDTH + x) * 4;
-				drawFunc(data + i, x, y, loop);
+				drawFunc(data[y][x], x, y, loop);
 			}
 		}
 

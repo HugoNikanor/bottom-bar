@@ -37,7 +37,7 @@ void setup_shader() {
 		usleep(100000);
 }
 
-void tetris_shader(byte* pixel, uint x, uint y, ulong loop) {
+void tetris_shader(byte pixel[4], uint x, uint y, ulong loop) {
 	color (*board)[width] = (color (*)[width]) _g_board;
 	
 	int xp = x * scale;

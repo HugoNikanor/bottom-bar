@@ -4,7 +4,7 @@
 #include "shader_common.h"
 
 void setup_shader();
-void tetris_shader(byte* pixel, uint x, uint y, ulong loop);
+void tetris_shader(byte pixel[4], uint x, uint y, ulong loop);
 
 void create_tetris_shader(shader*);
 

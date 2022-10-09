@@ -11,8 +11,8 @@ extern batteryData batData;
 void init_shader ();
 
 // TODO should const also be noted here?
-void hsvGradient(byte*, uint, uint, ulong);
-void batteryShader(byte*, uint, uint, ulong);
+void hsvGradient(byte[4], uint, uint, ulong);
+void batteryShader(byte[4], uint, uint, ulong);
 
 void create_battery_shader(shader*);
 

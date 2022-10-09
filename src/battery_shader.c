@@ -108,7 +108,7 @@ void init_shader () {
 }
 
 void hsvGradient(
-		byte* pixel,
+		byte pixel[4],
 		const uint x,
 		const uint y,
 		const ulong loop)
@@ -143,7 +143,7 @@ void hsvGradient(
  * battery range.
  */
 void batteryShader(
-		byte* pixel,
+		byte pixel[4],
 		const uint x,
 		const uint y,
 		const ulong loop)
