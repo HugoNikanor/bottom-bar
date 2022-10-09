@@ -40,6 +40,8 @@ unsigned int DATA_SIZE;
 
 batteryData batData;
 
+#define USE_FONTINFO 1
+
 int main() {
 	srandom(1);
 
@@ -58,18 +60,23 @@ int main() {
 	// it doesn't work when running from systemd.
 	// TODO log some stuff somewhere, so I can actually
 	//      see what happens.
-	/*
+#if USE_FONTINFO
 	char* ttyname = get_tty();
 	fontinfo fontinfo;
 	get_font_info(ttyname, &fontinfo);
 	free(ttyname);
-	*/
+#endif
 
 	//printf("%i %i %i\n", fontinfo.height, fontinfo.width, fontinfo.chars);
 
 	HEIGHT       = vinfo.yres; // 800
 	WIDTH        = vinfo.xres; // 1280
-	FONT_HEIGHT  = 12; // fontinfo.height; // 12 // HEIGHT / LINES;
+	FONT_HEIGHT  =
+#if USE_FONTINFO
+		fontinfo.height; // 12 // HEIGHT / LINES;
+#else
+		16;
+#endif
 	LINES        = HEIGHT / FONT_HEIGHT; // 66
 
 	USABLE_LINES = HEIGHT - FONT_HEIGHT * LINES;
